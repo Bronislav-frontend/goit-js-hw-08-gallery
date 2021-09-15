@@ -63,3 +63,80 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+const galleryContainer = document.querySelector('.js-gallery');
+const lightBox = document.querySelector('.js-lightbox');
+const lightBoxImage = document.querySelector('.lightbox__image');
+const mdlCloseBtn = document.querySelector('[data-action="close-lightbox"]');
+const mdlCloseOvrl = document.querySelector('.lightbox__overlay');
+const galleryMarkup = createGalleryMarkup(galleryItems);
+
+
+
+galleryContainer.insertAdjacentHTML("beforeend", galleryMarkup);
+
+galleryContainer.addEventListener('click', clickOnGalleryContainer);
+
+function createGalleryMarkup(galleryItems) {
+  return galleryItems
+    .map(({ preview, original, description }) => {
+    return `
+      <li class="gallery__item">
+        <a
+        class="gallery__link"
+        href="${original}"
+      >
+        <img
+          class="gallery__image"
+          src="${preview}"
+          data-source="${original}"
+          alt="${description}"
+        />
+      </a>
+      </li>
+      `;
+  })
+    .join('');
+};
+
+function clickOnGalleryContainer(evt) {
+  if (!evt.target.classList.contains('gallery__image')) {
+    return
+  }
+  evt.preventDefault();
+
+  lightBox.classList.add('is-open');
+  lightBoxImage.src = evt.target.dataset.source;
+  lightBoxImage.alt = evt.target.alt;
+
+  window.addEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+      mdlClose()
+    };
+  });
+
+};
+
+mdlCloseOvrl.addEventListener('click', mdlClose);
+mdlCloseBtn.addEventListener('click', mdlClose);
+
+function mdlClose(evt) {
+  lightBox.classList.remove('is-open');
+  lightBoxImage.src = '';
+  lightBoxImage.alt = '';
+  window.removeEventListener('keydown', (evt) => {
+    if (evt.key === 'Escape') {
+      mdlClose();
+    };
+  });
+};
+
+// function slider(evt) {
+//   if (lightBox.classList.contains('is-open')) {
+//     window.addEventListener('keydown', (evt) => {
+//       if (evt.key === 'ArrowLeft') {
+      
+//     }
+//     });
+//   };
+// }
