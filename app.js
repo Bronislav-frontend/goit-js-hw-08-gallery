@@ -106,14 +106,8 @@ function clickOnGalleryContainer(evt) {
   evt.preventDefault();
 
   lightBox.classList.add('is-open');
-  lightBoxImage.src = evt.target.dataset.source;
-  lightBoxImage.alt = evt.target.alt;
-
-  window.addEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
-      mdlClose()
-    };
-  });
+  setPictureAttributes(evt.target.dataset.source, evt.target.alt);
+  window.addEventListener('keydown', modalKeyDown);
 
 };
 
@@ -122,21 +116,36 @@ mdlCloseBtn.addEventListener('click', mdlClose);
 
 function mdlClose(evt) {
   lightBox.classList.remove('is-open');
-  lightBoxImage.src = '';
-  lightBoxImage.alt = '';
-  window.removeEventListener('keydown', (evt) => {
-    if (evt.key === 'Escape') {
-      mdlClose();
-    };
-  });
+  setPictureAttributes('', '');
+  window.removeEventListener('keydown', modalKeyDown);
 };
 
-// function slider(evt) {
-//   if (lightBox.classList.contains('is-open')) {
-//     window.addEventListener('keydown', (evt) => {
-//       if (evt.key === 'ArrowLeft') {
-      
-//     }
-//     });
-//   };
-// }
+function setPictureAttributes(src, alt) {
+  lightBoxImage.src = src
+  lightBoxImage.alt = alt
+};
+
+function modalKeyDown(evt) {
+  let imageIndex = galleryItems.findIndex(
+    image => image.original === lightBoxImage.src,
+  );
+  switch (evt.code) {
+    case 'Escape':
+      mdlClose()
+      break;
+     
+    case 'ArrowRight':
+      if (imageIndex === galleryItems.length - 1) {
+        imageIndex = -1;
+      }
+      imageIndex += 1;
+      break;
+
+    case 'ArrowLeft':
+      if (imageIndex === 0) {
+        imageIndex += galleryItems.length;
+      }
+      imageIndex -= 1;
+  }
+  setPictureAttributes (galleryItems[imageIndex].original, galleryItems[imageIndex].description)
+};
